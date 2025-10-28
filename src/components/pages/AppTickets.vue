@@ -1,18 +1,18 @@
 <template>
-  <div class="min-h-screen bg-gray-50 flex flex-col">
-    <Navbar />
+  <div class="flex flex-col min-h-screen bg-gray-50">
+    <AppNavbar />
 
     <main class="flex-1 max-w-[1440px] mx-auto px-4 py-8 w-full">
       <!-- Header -->
-      <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
+      <div class="flex flex-col mb-8 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
+          <h1 class="mb-2 text-3xl font-bold text-gray-900 md:text-4xl">
             Ticket Management
           </h1>
           <p class="text-gray-600">Create, view, edit, and delete your tickets</p>
         </div>
         <button @click="showForm = true"
-          class="mt-4 md:mt-0 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg transition-colors shadow-md flex items-center justify-center space-x-2">
+          class="flex items-center justify-center px-6 py-3 mt-4 space-x-2 font-semibold text-white transition-colors bg-blue-600 rounded-lg shadow-md md:mt-0 hover:bg-blue-700">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
           </svg>
@@ -21,7 +21,7 @@
       </div>
 
       <!-- Filter Tabs -->
-      <div class="bg-white rounded-xl shadow-md p-4 mb-6">
+      <div class="p-4 mb-6 bg-white shadow-md rounded-xl">
         <div class="flex flex-wrap gap-2">
           <button v-for="status in ['all', 'open', 'in_progress', 'closed']" :key="status" @click="filter = status"
             :class="filterButtonClass(status)">
@@ -31,49 +31,49 @@
       </div>
 
       <!-- Tickets List -->
-      <div v-if="filteredTickets.length === 0" class="bg-white rounded-xl shadow-md p-12 text-center">
-        <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div v-if="filteredTickets.length === 0" class="p-12 text-center bg-white shadow-md rounded-xl">
+        <svg class="w-16 h-16 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
             d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
         </svg>
-        <h3 class="text-xl font-semibold text-gray-900 mb-2">No tickets found</h3>
-        <p class="text-gray-600 mb-4">
+        <h3 class="mb-2 text-xl font-semibold text-gray-900">No tickets found</h3>
+        <p class="mb-4 text-gray-600">
           {{ filter === 'all' ? 'Get started by creating your first ticket' : `No tickets with status
           "${filter.replace('_', ' ')}"` }}
         </p>
         <button v-if="filter === 'all'" @click="showForm = true"
-          class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-lg transition-colors">
+          class="px-6 py-2 font-semibold text-white transition-colors bg-blue-600 rounded-lg hover:bg-blue-700">
           Create Ticket
         </button>
       </div>
 
-      <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div v-else class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         <TicketCard v-for="ticket in filteredTickets" :key="ticket.id" :ticket="ticket" @edit="handleEdit"
           @delete="handleDelete" />
       </div>
     </main>
 
-    <Footer />
+    <AppFooter />
 
     <!-- Create/Edit Ticket Modal -->
     <TicketForm v-if="showForm" :ticket="editingTicket" @submit="editingTicket ? handleUpdate : handleCreate"
       @cancel="handleCloseForm" />
 
     <!-- Delete Confirmation Modal -->
-    <div v-if="deleteConfirm" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-      <div class="bg-white rounded-xl shadow-md p-6 w-full max-w-md">
-        <h2 class="text-xl font-bold mb-4">Confirm Delete</h2>
+    <div v-if="deleteConfirm" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+      <div class="w-full max-w-md p-6 bg-white shadow-md rounded-xl">
+        <h2 class="mb-4 text-xl font-bold">Confirm Delete</h2>
         <p class="mb-6">Are you sure you want to delete the ticket "{{ deleteConfirm.title }}"? This action cannot be
           undone.</p>
         <div class="flex justify-end gap-2">
-          <button @click="deleteConfirm = null" class="px-4 py-2 rounded-lg border">Cancel</button>
-          <button @click="confirmDelete" class="px-4 py-2 rounded-lg bg-red-600 text-white">Delete</button>
+          <button @click="deleteConfirm = null" class="px-4 py-2 border rounded-lg">Cancel</button>
+          <button @click="confirmDelete" class="px-4 py-2 text-white bg-red-600 rounded-lg">Delete</button>
         </div>
       </div>
     </div>
 
     <!-- Toast -->
-    <div v-if="toast.open" class="fixed top-4 left-1/2 transform -translate-x-1/2 z-50">
+    <div v-if="toast.open" class="fixed z-50 transform -translate-x-1/2 top-4 left-1/2">
       <div :class="toastClass">
         {{ toast.message }}
       </div>
