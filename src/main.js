@@ -5,8 +5,8 @@ import router from './router'
 import { createPinia } from 'pinia'
 
 // Global Styles
-import '../../assets/design-token.css'
-import './index.css' // your Tailwind entry file
+import './assets/design-token.css'
+import './index.css' //  Tailwind entry file
 
 
 // Vuetify setup
